@@ -13,6 +13,6 @@ jobs:
     name: Auto-update
     runs-on: ubuntu-latest
     steps:
-      - uses: tibdex/auto-update@v2
+      - uses: careofvitamins/auto-update@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
