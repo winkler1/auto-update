@@ -163,6 +163,8 @@ const run = async () => {
       {
         ...context.repo,
         base,
+        direction: "asc",
+        sort: "updated",
         state: "open",
       },
     );
@@ -174,9 +176,12 @@ const run = async () => {
     );
 
     for (const pullRequest of pullRequests) {
-      // PRs are handled sequentially to avoid breaking GitHub's log grouping feature.
-      // eslint-disable-next-line no-await-in-loop
-      await handlePullRequest(pullRequest, { eventPayload, octokit });
+      if (pullRequest.auto_merge) {
+        // PRs are handled sequentially to avoid breaking GitHub's log grouping feature.
+        // eslint-disable-next-line no-await-in-loop
+        await handlePullRequest(pullRequest, { eventPayload, octokit });
+        return;
+      }
     }
   } catch (error: unknown) {
     handleError(error, { handle: setFailed });
