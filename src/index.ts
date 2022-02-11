@@ -1,4 +1,4 @@
-// break syntax so CI fails
+import {
   getInput,
   group,
   info,
