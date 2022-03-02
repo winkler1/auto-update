@@ -22,6 +22,7 @@ const handleError = (
   }
 
   handle(error);
+  setFailed(error);
 };
 
 const unupdatablePullRequestCommentBody =
