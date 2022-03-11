@@ -13,6 +13,6 @@ jobs:
     name: Auto-update
     runs-on: ubuntu-latest
     steps:
-      - uses: careofvitamins/auto-update@v3
+      - uses: careofvitamins/auto-update@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
