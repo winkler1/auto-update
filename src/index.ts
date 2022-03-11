@@ -176,7 +176,46 @@ const run = async () => {
       )}`,
     );
 
-    for (const pullRequest of pullRequests) {
+    const autoMergeEnabledPullRequests = pullRequests.filter(
+      (pullRequest) => pullRequest.auto_merge,
+    );
+
+    info(
+      `auto-merge-enabled pull requests: ${JSON.stringify(
+        autoMergeEnabledPullRequests.map((pullRequest) => pullRequest.number),
+      )}`,
+    );
+
+    const developerPullRequests = autoMergeEnabledPullRequests.filter(
+      (pullRequest) => pullRequest.user?.login !== "dependabot",
+    );
+
+    info(
+      `developer pull requests: ${JSON.stringify(
+        developerPullRequests.map((pullRequest) => pullRequest.number),
+      )}`,
+    );
+
+    for (const pullRequest of developerPullRequests) {
+      if (pullRequest.auto_merge) {
+        // PRs are handled sequentially to avoid breaking GitHub's log grouping feature.
+        // eslint-disable-next-line no-await-in-loop
+        await handlePullRequest(pullRequest, { eventPayload, octokit });
+        return;
+      }
+    }
+
+    const dependabotPullRequests = autoMergeEnabledPullRequests.filter(
+      (pullRequest) => pullRequest.user?.login === "dependabot",
+    );
+
+    info(
+      `dependabot pull requests: ${JSON.stringify(
+        dependabotPullRequests.map((pullRequest) => pullRequest.number),
+      )}`,
+    );
+
+    for (const pullRequest of dependabotPullRequests) {
       if (pullRequest.auto_merge) {
         // PRs are handled sequentially to avoid breaking GitHub's log grouping feature.
         // eslint-disable-next-line no-await-in-loop
