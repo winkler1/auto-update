@@ -187,7 +187,7 @@ const run = async () => {
     );
 
     const developerPullRequests = autoMergeEnabledPullRequests.filter(
-      (pullRequest) => pullRequest.user?.login !== "dependabot",
+      (pullRequest) => pullRequest.user?.login !== "dependabot[bot]",
     );
 
     info(
@@ -206,7 +206,7 @@ const run = async () => {
     }
 
     const dependabotPullRequests = autoMergeEnabledPullRequests.filter(
-      (pullRequest) => pullRequest.user?.login === "dependabot",
+      (pullRequest) => pullRequest.user?.login === "dependabot[bot]",
     );
 
     info(
