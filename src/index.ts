@@ -144,6 +144,21 @@ const handlePullRequest = async (
 
 const run = async () => {
   try {
+    const localDateString = new Date().toLocaleString("en-US", {
+      timeZone: "America/New_York",
+    });
+    const localDate = new Date(localDateString);
+    const localDayIndex = localDate.getDay();
+
+    const fridayIndex = 5;
+    const saturdayIndex = 6;
+    const sundayIndex = 0;
+
+    if ([fridayIndex, saturdayIndex, sundayIndex].includes(localDayIndex)) {
+      info("Skipping auto-update on Friday-Sunday in NY");
+      return;
+    }
+
     const token = getInput("github_token", { required: true });
     const octokit = getOctokit(token);
 
