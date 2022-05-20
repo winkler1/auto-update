@@ -155,8 +155,8 @@ const run = async () => {
     const sundayIndex = 0;
 
     if ([fridayIndex, saturdayIndex, sundayIndex].includes(localDayIndex)) {
-      info("Skipping auto-update on Friday-Sunday in NY");
-      return;
+      // info("Skipping auto-update on Friday-Sunday in NY");
+      // return;
     }
 
     const token = getInput("github_token", { required: true });
@@ -179,7 +179,7 @@ const run = async () => {
       {
         ...context.repo,
         base,
-        direction: "asc",
+        direction: "desc",
         sort: "updated",
         state: "open",
       },
