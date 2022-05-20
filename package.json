@@ -1,13 +1,13 @@
 {
   "name": "auto-update",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "license": "MIT",
   "files": [
     "action.yml",
     "dist"
   ],
   "scripts": {
-    "build": "ncc build src/index.ts --minify  --target es2021 --v8-cache",
+    "build": "ncc build src/index.ts --minify  --target es2021 --v8-cache && zip -vr release.zip action.yml dist/ package.json",
     "prettier": "prettier --ignore-path .gitignore \"./**/*.{cjs,js,json,md,ts,yml}\"",
     "xo": "xo"
   },
