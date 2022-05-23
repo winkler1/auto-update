@@ -143,6 +143,7 @@ const handlePullRequest = async (
 };
 
 const run = async () => {
+  info("---- latest code.")
   try {
     const localDateString = new Date().toLocaleString("en-US", {
       timeZone: "America/New_York",
@@ -212,12 +213,10 @@ const run = async () => {
     );
 
     for (const pullRequest of developerPullRequests) {
-      if (pullRequest.auto_merge) {
-        // PRs are handled sequentially to avoid breaking GitHub's log grouping feature.
-        // eslint-disable-next-line no-await-in-loop
-        await handlePullRequest(pullRequest, { eventPayload, octokit });
-        return;
-      }
+      // PRs are handled sequentially to avoid breaking GitHub's log grouping feature.
+      // eslint-disable-next-line no-await-in-loop
+      await handlePullRequest(pullRequest, { eventPayload, octokit });
+      return;
     }
 
     const dependabotPullRequests = autoMergeEnabledPullRequests.filter(
@@ -231,12 +230,10 @@ const run = async () => {
     );
 
     for (const pullRequest of dependabotPullRequests) {
-      if (pullRequest.auto_merge) {
         // PRs are handled sequentially to avoid breaking GitHub's log grouping feature.
         // eslint-disable-next-line no-await-in-loop
         await handlePullRequest(pullRequest, { eventPayload, octokit });
         return;
-      }
     }
   } catch (error: unknown) {
     handleError(error, { handle: setFailed });
