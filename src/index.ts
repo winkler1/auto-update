@@ -11,6 +11,9 @@ import { GitHub } from "@actions/github/lib/utils";
 import type { components } from "@octokit/openapi-types";
 import type { PushEvent } from "@octokit/webhooks-definitions/schema";
 
+var scheduledUpdates = 0;
+const MAX_SCHEDULED_UPDATES = 2;
+
 const handleError = (
   error: unknown,
   {
@@ -121,6 +124,7 @@ const handlePullRequest = async (
   await group(
     `Attempting to update pull request #${pullRequest.number}`,
     async () => {
+      ++scheduledUpdates;
       try {
         await octokit.request(
           "PUT /repos/{owner}/{repo}/pulls/{pull_number}/update-branch",
@@ -216,7 +220,9 @@ const run = async () => {
       // PRs are handled sequentially to avoid breaking GitHub's log grouping feature.
       // eslint-disable-next-line no-await-in-loop
       await handlePullRequest(pullRequest, { eventPayload, octokit });
-      return;
+      if (scheduledUpdates >= MAX_SCHEDULED_UPDATES) {
+        return;
+      };
     }
 
     const dependabotPullRequests = autoMergeEnabledPullRequests.filter(
@@ -230,10 +236,12 @@ const run = async () => {
     );
 
     for (const pullRequest of dependabotPullRequests) {
-        // PRs are handled sequentially to avoid breaking GitHub's log grouping feature.
-        // eslint-disable-next-line no-await-in-loop
-        await handlePullRequest(pullRequest, { eventPayload, octokit });
+      // PRs are handled sequentially to avoid breaking GitHub's log grouping feature.
+      // eslint-disable-next-line no-await-in-loop
+      await handlePullRequest(pullRequest, { eventPayload, octokit });
+      if (scheduledUpdates >= MAX_SCHEDULED_UPDATES) {
         return;
+      };
     }
   } catch (error: unknown) {
     handleError(error, { handle: setFailed });
